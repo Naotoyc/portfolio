@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>長門石直彦 | Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
+      background: #0a0a0a;
+      color: #f0f0f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem 2rem 4rem;
+      position: relative;
+      background: url('bg.png') center center / cover no-repeat fixed;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 80%);
+      pointer-events: none;
+    }
+
+    /* Glow accents */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    .glow-1 {
+      width: 400px;
+      height: 400px;
+      background: #e8a030;
+      top: 10%;
+      left: 20%;
+    }
+
+    .glow-2 {
+      width: 300px;
+      height: 300px;
+      background: #2a7ab5;
+      bottom: 20%;
+      right: 10%;
+      animation-delay: 3s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50% { opacity: 0.2; transform: scale(1.1); }
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-radius: 2rem;
+      padding: 3.5rem 3rem;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .emoji-avatar {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: wave 2s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(10deg); }
+      75% { transform: rotate(-5deg); }
+    }
+
+    .name-en {
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 0.4rem;
+    }
+
+    .name-ja {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.8rem;
+      background: linear-gradient(135deg, #2a2a2a, #555);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.2), transparent);
+      margin: 0 auto 1.8rem;
+    }
+
+    .section-label {
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    /* Links */
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+
+    .links-row {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.3rem;
+      border-radius: 50px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      flex: 1;
+      max-width: 180px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .link-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .link-spotify {
+      background: #1db954;
+      border-color: #1db954;
+    }
+
+    .link-spotify:hover {
+      box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);
+    }
+
+    .link-apple {
+      background: #9b59b6;
+      border-color: #9b59b6;
+    }
+
+    .link-apple:hover {
+      box-shadow: 0 4px 20px rgba(155, 89, 182, 0.4);
+    }
+
+    .link-x {
+      background: #222;
+      border-color: #222;
+    }
+
+    .link-x:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .link-instagram {
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      border-color: #dc2743;
+    }
+
+    .link-instagram:hover {
+      box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+    }
+
+    .link-music {
+      background: #ff6b6b;
+      border-color: #ff6b6b;
+    }
+
+    .link-music:hover {
+      box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    .link-blog {
+      background: #4a90d9;
+      border-color: #4a90d9;
+    }
+
+    .link-blog:hover {
+      box-shadow: 0 4px 20px rgba(74, 144, 217, 0.4);
+    }
+
+    .link-note {
+      background: #41c9b4;
+      border-color: #41c9b4;
+    }
+
+    .link-note:hover {
+      box-shadow: 0 4px 20px rgba(65, 201, 180, 0.4);
+    }
+
+    .link-linktree {
+      background: #43e660;
+      border-color: #43e660;
+    }
+
+    .link-linktree:hover {
+      box-shadow: 0 4px 20px rgba(67, 230, 96, 0.4);
+    }
+
+    .link-category {
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: #555;
+      margin-top: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .link-icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    @media (max-width: 480px) {
+      .links-row {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .link-btn {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+
+    /* YouTube Section */
+    .youtube-section {
+      position: relative;
+      z-index: 1;
+      padding: 4rem 2rem 5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(180deg, #f5f0ea 0%, #faf7f2 50%, #f5f0ea 100%);
+    }
+
+    .youtube-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+
+    .youtube-header svg {
+      width: 28px;
+      height: 28px;
+      fill: #ff0000;
+    }
+
+    .youtube-header h2 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #2d2d2d;
+    }
+
+    .youtube-embed {
+      background: #fff;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      max-width: 720px;
+      width: 100%;
+    }
+
+    .youtube-embed iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: none;
+      display: block;
+    }
+
+    .youtube-subscribe {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      background: #cc0000;
+      border: 1px solid #cc0000;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .youtube-subscribe:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 25px rgba(255, 0, 0, 0.4);
+    }
+
+    .youtube-subscribe svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.65rem;
+      color: #bbb;
+      letter-spacing: 0.15em;
+      background: #f5f0ea;
+    }
+
+    /* Fade-in */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(25px);
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    .fade-in-1 { animation-delay: 0.1s; }
+    .fade-in-2 { animation-delay: 0.3s; }
+    .fade-in-3 { animation-delay: 0.5s; }
+    .fade-in-4 { animation-delay: 0.7s; }
+    .fade-in-5 { animation-delay: 0.9s; }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="card">
+      <div class="emoji-avatar fade-in fade-in-1">🎧<span style="color:#222;font-size:0.5em">×</span>👔<span style="color:#222;font-size:0.5em">×</span>🧸</div>
+      <p class="name-en fade-in fade-in-2">Naohiko Nagatoishi</p>
+      <h1 class="name-ja fade-in fade-in-2">長門石 直彦</h1>
+      <div class="divider fade-in fade-in-3"></div>
+      <p class="section-label fade-in fade-in-4">Links</p>
+      <div class="links fade-in fade-in-5">
+        <!-- Singer -->
+        <p class="link-category">🎤 シンガー活動</p>
+        <div class="links-row">
+          <a href="https://x.com/NNagatoishi" target="_blank" rel="noopener noreferrer" class="link-btn link-x">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X
+          </a>
+          <a href="https://www.instagram.com/ga_tanoshii/" target="_blank" rel="noopener noreferrer" class="link-btn link-instagram">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            Instagram
+          </a>
+          <a href="https://linkco.re/GzSHhQcG" target="_blank" rel="noopener noreferrer" class="link-btn link-music">
+            <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            Music
+          </a>
+        </div>
+
+        <!-- Podcast -->
+        <p class="link-category">📻 Podcast</p>
+        <div class="links-row">
+          <a href="https://open.spotify.com/show/5BIkCjQ5ZqhQdjgO5RiMXK?si=14ca09de1a334369" target="_blank" rel="noopener noreferrer" class="link-btn link-spotify">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="https://podcasts.apple.com/jp/podcast/id1869549333" target="_blank" rel="noopener noreferrer" class="link-btn link-apple">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M5.34 0A5.328 5.328 0 0 0 0 5.34v13.32A5.328 5.328 0 0 0 5.34 24h13.32A5.328 5.328 0 0 0 24 18.66V5.34A5.328 5.328 0 0 0 18.66 0zm6.525 2.568c2.336 0 4.448.902 6.056 2.587 1.212 1.268 1.833 2.749 1.758 2.927-.07.168-1.095-.37-1.095-.37-.96-.554-1.98-.805-3.088-.805-3.356 0-6.048 2.693-6.048 6.048 0 1.96.964 3.805 2.496 4.96.348.262.622.525.622.6 0 .311-1.17 1.692-1.707 2.014-.295.176-.614.072-.88-.112A8.834 8.834 0 0 1 6.4 13.972c0-2.79 1.308-5.396 3.477-7.088a8.58 8.58 0 0 1 1.988-1.316zm.238 4.11c-.063 0-.126.003-.188.012-.88.116-1.609.737-1.921 1.533-.397 1.01-.129 2.17.688 2.965.11.107.175.152.175.262 0 .096-.427 1.738-.505 1.92-.215.498-.636.69-.973.69-.375 0-.715-.253-.888-.46-1.074-1.298-1.539-2.93-1.297-4.58.358-2.457 2.293-4.422 4.667-4.737a4.843 4.843 0 0 1 3.612 1.062c1.075.864 1.72 2.162 1.766 3.553.037 1.094-.239 2.14-.793 3.015-.249.392-.554.504-.807.504-.41 0-.725-.354-.844-.793-.068-.25-.478-1.848-.493-1.96 0-.098.064-.143.175-.262.502-.54.793-1.29.762-2.068-.047-1.16-.943-2.182-2.135-2.39z"/></svg>
+            Apple Podcast
+          </a>
+        </div>
+
+        <!-- Dad -->
+        <p class="link-category">👔 ワーパパ発信</p>
+        <div class="links-row">
+          <a href="https://x.com/papatoishi" target="_blank" rel="noopener noreferrer" class="link-btn link-x">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X
+          </a>
+          <a href="https://www.instagram.com/papatoishi/" target="_blank" rel="noopener noreferrer" class="link-btn link-instagram">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            Instagram
+          </a>
+          <a href="https://minitoishi.com" target="_blank" rel="noopener noreferrer" class="link-btn link-blog">
+            <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Blog
+          </a>
+        </div>
+
+        <!-- Other -->
+        <p class="link-category">📝 その他</p>
+        <div class="links-row">
+          <a href="https://note.com/cryptophan" target="_blank" rel="noopener noreferrer" class="link-btn link-note">
+            <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            note
+          </a>
+          <a href="https://linktr.ee/NaohikoNagatoishi" target="_blank" rel="noopener noreferrer" class="link-btn link-linktree">
+            <svg class="link-icon" viewBox="0 0 24 24"><path d="M7.953 15.066l-.038-4.094-3.86 2.849a.837.837 0 0 1-1.182-.124l-1.539-1.927a.842.842 0 0 1 .126-1.186l3.89-2.865-3.89-2.865a.842.842 0 0 1-.126-1.186l1.54-1.927a.837.837 0 0 1 1.181-.124l3.86 2.849.038-4.094A.839.839 0 0 1 8.793 0h2.414a.839.839 0 0 1 .84.84v4.093l3.86-2.848a.837.837 0 0 1 1.182.124l1.539 1.927a.842.842 0 0 1-.126 1.186l-3.89 2.865 3.89 2.865a.842.842 0 0 1 .126 1.186l-1.54 1.927a.837.837 0 0 1-1.181.124l-3.86-2.849.038 4.094a.839.839 0 0 1-.84.84H8.793a.839.839 0 0 1-.84-.84zm.84 2.55h6.414v6.384H8.793z"/></svg>
+            Linktree
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="youtube-section">
+    <div class="youtube-header">
+      <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      <h2>YouTube</h2>
+    </div>
+
+    <div class="youtube-embed">
+      <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=blackjoker31n" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p style="margin-top: 0.8rem; font-size: 0.75rem; color: #aaa;">* 動画が表示されない場合は下のボタンからチャンネルをご覧ください</p>
+
+    <a href="https://youtube.com/@blackjoker31n?si=qvBtY7A7j8TH2eUc" target="_blank" rel="noopener noreferrer" class="youtube-subscribe">
+      <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      チャンネルを見る
+    </a>
+  </section>
+
+  <footer class="footer">&copy; 2026 Naohiko Nagatoishi</footer>
+</body>
+</html>
