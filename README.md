@@ -68,6 +68,7 @@ Oura Ring API v2 から睡眠・準備度・活動量データを取得し、
 | `OURA_ACCESS_TOKEN` | Oura のPersonal Access Token |
 | `GMAIL_ADDRESS` | 送信元＆送信先のGmailアドレス（例: `you@gmail.com`） |
 | `GMAIL_APP_PASSWORD` | Googleのアプリパスワード（16桁） |
+| `ANTHROPIC_API_KEY` | Anthropic API キー（3日間行動改善レポート生成に使用） |
 
 #### 4. GitHub Actions の有効化確認
 
