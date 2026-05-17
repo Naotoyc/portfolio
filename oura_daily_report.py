@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Oura Ring daily health report via Gmail SMTP."""
 
+import json
 import os
 import smtplib
 from datetime import date, timedelta
@@ -100,22 +101,22 @@ def generate_insights(
         if sleep_score >= 85:
             insights.append({"type": "good", "text": f"睡眠スコア {sleep_score} は最適レベルです。この調子を維持しましょう。"})
         elif sleep_score < 70:
-            insights.append({"type": "warn", "text": f"睡眠スコア {sleep_score} はやや低調です。就寢時間も30分早めるか、寢室の温度・光環境を見直してみてください。"})
+            insights.append({"type": "warn", "text": f"睡眠スコア {sleep_score} はやや低調です。就寝時間を〰6分早めるか、寝室の温度・光環境を見直してみてください。"})
 
     if len(recent_sleep_scores) >= 3:
         if recent_sleep_scores[-1] > recent_sleep_scores[0] + 5:
             insights.append({"type": "good", "text": "直近3日で睡眠スコアが改善傾向にあります。良い習慣が続いています。"})
         elif recent_sleep_scores[-1] < recent_sleep_scores[0] - 5:
-            insights.append({"type": "warn", "text": "直近3日で睡眠スコアが下降傾向です。就寢前のスマホ使用や飲酒を控えると改善しやすいです。"})
+            insights.append({"type": "warn", "text": "直近3日で睡眠スコアが下降傾向です。就寝前のスマホ使用や飲酒を控えると改善しやすいです。"})
 
     if deep_secs is not None:
         if deep_secs < 45 * 60:
-            insights.append({"type": "warn", "text": f"深睡眠が{seconds_to_hm(deep_secs)}と少なめです。就寢２時間前のカフェイン・アルコール・激しい運動を避けると深睡眠が増えやすくなります。"})
+            insights.append({"type": "warn", "text": f"深睡眠が{seconds_to_hm(deep_secs)}と少なめです。就寝2時間前のカフェイン・アルコール・激しい運動を避けると深睡眠が増えやすくなります。"})
         elif deep_secs >= 90 * 60:
             insights.append({"type": "good", "text": f"深睡眠が{seconds_to_hm(deep_secs)}と十分確保できています。身体の回復・記憶定着に効果的です。"})
 
     if total_secs is not None and total_secs < 6 * 3600:
-        insights.append({"type": "warn", "text": f"総睡眠時間が{seconds_to_hm(total_secs)}〆6時間を下回っています。慢性的な睡眠不足は集中力・免疫力の低下につながります。"})
+        insights.append({"type": "warn", "text": f"総睡眠時間が{seconds_to_hm(total_secs)}と6時間を下回っています。慢性的な睡眠不足は集中力・免疫力の低下につながります。"})
 
     if readiness_score is not None:
         if readiness_score >= 85:
@@ -127,11 +128,11 @@ def generate_insights(
         if hrv >= 90:
             insights.append({"type": "good", "text": f"HRVバランス {hrv}点 は非常に高く、自律神経が整っています。"})
         elif hrv < 60:
-            insights.append({"type": "warn", "text": f"HRVバランスが {hrv}点 と低下しています。ストレスや疲労が蓄積している可能性があります。深呼吸・瞥想・入浴が効果的です。"})
+            insights.append({"type": "warn", "text": f"HRVバランスが {hrv}点 と低下しています。ストレスや疲労が蓄積している可能性があります。深呼吸・瑞想・入浴が効果的です。"})
 
     if len(recent_act_scores) >= 3:
         if sum(1 for s in recent_act_scores if s < 70) >= 2:
-            insights.append({"type": "tip", "text": "直近3日のうち活動量スコアが低い日が続いています。通勤でひと駅歩く・昔休みに10分散歩するなど小さな積み重ねが効果的です。"})
+            insights.append({"type": "tip", "text": "直近3日のうち活動量スコアが低い日が続いています。通勤でひと駅歩く・昜休みに10分散歩するなど小さな積み重ねが効果的です。"})
 
     if sleep_score and week_sleep_avg and sleep_score >= week_sleep_avg + 5:
         insights.append({"type": "good", "text": f"昨日の睡眠スコアは週平均（{week_sleep_avg:.0f}）より {sleep_score - week_sleep_avg:.0f}点 上回っています。"})
@@ -145,6 +146,68 @@ def generate_insights(
     return insights
 
 
+def generate_claude_analysis(
+    week_sleep: list[dict],
+    week_readiness: list[dict],
+    week_activity: list[dict],
+    sleep_sessions: list[dict],
+) -> str:
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        return ""
+    try:
+        import anthropic
+
+        sorted_sleep = sorted(week_sleep, key=lambda x: x.get("day", ""))[-3:]
+        sorted_ready = sorted(week_readiness, key=lambda x: x.get("day", ""))[-3:]
+        sorted_act = sorted(week_activity, key=lambda x: x.get("day", ""))[-3:]
+        sorted_sess = sorted(sleep_sessions, key=lambda x: x.get("day", ""))[-3:]
+
+        payload = {
+            "sleep_scores": [{"day": d.get("day"), "score": d.get("score")} for d in sorted_sleep],
+            "readiness_scores": [{"day": d.get("day"), "score": d.get("score")} for d in sorted_ready],
+            "activity_scores": [{"day": d.get("day"), "score": d.get("score")} for d in sorted_act],
+            "sleep_detail": [
+                {
+                    "day": s.get("day"),
+                    "total_sleep_min": (s.get("total_sleep_duration") or 0) // 60,
+                    "deep_sleep_min": (s.get("deep_sleep_duration") or 0) // 60,
+                    "rem_sleep_min": (s.get("rem_sleep_duration") or 0) // 60,
+                    "efficiency": s.get("efficiency"),
+                }
+                for s in sorted_sess
+            ],
+        }
+
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=600,
+            system=[
+                {
+                    "type": "text",
+                    "text": (
+                        "あなたはOura Ringデータをもとに睡眠・健康改善を提案する専門家です。"
+                        "データを分析し、具体的で実行しやすい改善提案を3点、日本語で簡潔に述べてください。"
+                        "各提案は「・」で始め、2〜3文以内にまとめてください。"
+                        "データがない場合は一般的な睡眠改善アドバイスを述べてください。"
+                    ),
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"直近3日間の健康データ:\n{json.dumps(payload, ensure_ascii=False, indent=2)}\n\nこのデータに基づいて改善提案を3点述べてください。",
+                }
+            ],
+        )
+        return message.content[0].text
+    except Exception as e:
+        print(f"[WARN] Claude API error: {e}")
+        return ""
+
+
 def build_html(
     report_date: date,
     sleep: dict,
@@ -154,6 +217,7 @@ def build_html(
     week_sleep: list[dict],
     week_readiness: list[dict],
     week_activity: list[dict],
+    claude_analysis: str = "",
 ) -> str:
     target = report_date.strftime("%Y年%-m月%-d日")
 
@@ -255,6 +319,15 @@ def build_html(
           </td>
         </tr>
         <tr><td style="height:6px;"></td></tr>"""
+
+    claude_section = ""
+    if claude_analysis:
+        claude_section = f"""<tr>
+      <td style="background:#ffffff;padding:8px 32px 24px;">
+        <h2 style="margin:0 0 16px;color:#2d3748;font-size:15px;font-weight:700;letter-spacing:1px;border-bottom:2px solid #e2e8f0;padding-bottom:10px;">\U0001f916 3日間の傾向と改善提案（AI分析）</h2>
+        <div style="background:#f0f4ff;border-radius:8px;padding:16px 18px;color:#2d3748;font-size:14px;line-height:1.8;white-space:pre-wrap;">{claude_analysis}</div>
+      </td>
+    </tr>"""
 
     return f"""<!DOCTYPE html>
 <html lang="ja">
@@ -363,6 +436,8 @@ def build_html(
       </td>
     </tr>
 
+    {claude_section}
+
     <tr>
       <td style="background:#f8fafc;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;border-top:1px solid #e2e8f0;">
         <p style="margin:0;color:#a0aec0;font-size:12px;">このメールはOura Ring APIから自動生成されました</p>
@@ -395,14 +470,15 @@ def send_email(subject: str, html_body: str) -> None:
 
 
 def main() -> None:
+    report_mode = os.environ.get("REPORT_MODE", "morning")
     today = date.today()
     yesterday = today - timedelta(days=1)
     start = yesterday.isoformat()
     end = yesterday.isoformat()
-    two_days_ago = (today - timedelta(days=2)).isoformat()
+    four_days_ago = (today - timedelta(days=4)).isoformat()
     week_start = (today - timedelta(days=8)).isoformat()
 
-    print(f"対象日付: {start}")
+    print(f"対象日付: {start} / mode: {report_mode}")
 
     week_sleep = fetch("daily_sleep", week_start, end)
     week_readiness = fetch("daily_readiness", week_start, end)
@@ -412,10 +488,8 @@ def main() -> None:
     readiness = next((d for d in week_readiness if d.get("day") == start), {})
     activity = next((d for d in week_activity if d.get("day") == start), {})
 
-    sleep_detail_data = [
-        s for s in fetch("sleep", two_days_ago, end)
-        if s.get("day") == start
-    ]
+    sleep_sessions = fetch("sleep", four_days_ago, end)
+    sleep_detail_data = [s for s in sleep_sessions if s.get("day") == start]
     sleep_detail: dict = {}
     if sleep_detail_data:
         keys = ["total_sleep_duration", "deep_sleep_duration", "rem_sleep_duration", "light_sleep_duration"]
@@ -425,12 +499,20 @@ def main() -> None:
         efficiencies = [s.get("efficiency") for s in sleep_detail_data if s.get("efficiency") is not None]
         sleep_detail["efficiency"] = round(sum(efficiencies) / len(efficiencies)) if efficiencies else None
 
-    html = build_html(yesterday, sleep, readiness, activity, sleep_detail, week_sleep, week_readiness, week_activity)
+    claude_analysis = generate_claude_analysis(week_sleep, week_readiness, week_activity, sleep_sessions)
+
+    html = build_html(yesterday, sleep, readiness, activity, sleep_detail, week_sleep, week_readiness, week_activity, claude_analysis)
 
     date_str = yesterday.strftime("%Y/%m/%d")
     s_score = sleep.get("score", "?")
     r_score = readiness.get("score", "?")
-    subject = f"[Oura] {date_str} 日次レポート｜睡眠{s_score}・準備度{r_score}"
+    if report_mode == "confirmed":
+        prefix = "[Oura 確定]"
+        title = "前日確定レポート"
+    else:
+        prefix = "[Oura 朱]"
+        title = "当日朝レポート"
+    subject = f"{prefix} {date_str} {title}｜睡眠{s_score}・準備度{r_score}"
 
     send_email(subject, html)
     print("メール送信完了")
