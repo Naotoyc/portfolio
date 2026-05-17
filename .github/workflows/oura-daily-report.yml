@@ -1,0 +1,45 @@
+name: Oura Daily Health Report
+
+on:
+  schedule:
+    - cron: '0 19 * * *'  # 04:00 JST — 前日確定レポート
+    - cron: '0 23 * * *'  # 08:00 JST — 当日朝レポート
+  workflow_dispatch:
+    inputs:
+      report_mode:
+        description: 'Report mode (morning or confirmed)'
+        required: false
+        default: 'morning'
+        type: choice
+        options:
+          - morning
+          - confirmed
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send Oura daily report
+        env:
+          OURA_ACCESS_TOKEN: ${{ secrets.OURA_ACCESS_TOKEN }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REPORT_MODE: >-
+            ${{
+              github.event_name == 'workflow_dispatch' && inputs.report_mode ||
+              github.event.schedule == '0 19 * * *' && 'confirmed' ||
+              'morning'
+            }}
+          TZ: Asia/Tokyo
+        run: python oura_daily_report.py
